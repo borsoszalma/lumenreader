@@ -45,10 +45,31 @@ jobs:
           -Publisher '${{ vars.MSIX_PUBLISHER || 'CN=LumenReaderDev' }}'
           -PublisherDisplayName '${{ vars.MSIX_PUBLISHER_DISPLAY_NAME || 'Lumen Reader' }}'
 
+      # Portable build: unzip and run LumenReader.exe, no installation (for testing without the Store).
+      - name: Portable zip
+        if: github.event_name != 'pull_request'
+        shell: pwsh
+        run: |
+          foreach ($arch in 'x64','arm64') {
+            Compress-Archive -Path "artifacts/publish-$arch/*" -DestinationPath "artifacts/LumenReader-portable-$arch.zip"
+          }
+
       - uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          name: LumenReader-${{ steps.ver.outputs.version }}
+          name: LumenReader-portable-x64
+          path: artifacts/LumenReader-portable-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: LumenReader-portable-arm64
+          path: artifacts/LumenReader-portable-arm64.zip
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: LumenReader-msix-${{ steps.ver.outputs.version }}
           path: |
             artifacts/*.msixupload
             artifacts/*.msixbundle
@@ -57,5 +78,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.msixupload
+          files: |
+            artifacts/*.msixupload
+            artifacts/LumenReader-portable-*.zip
           generate_release_notes: true
