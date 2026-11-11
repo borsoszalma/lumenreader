@@ -8,8 +8,12 @@
         Background="{DynamicResource ChromeBackground}"
         FontFamily="{StaticResource UiFont}">
     <DockPanel>
+        <!-- Full screen: moving the mouse to the top edge brings the toolbar back -->
+        <Border x:Name="HotStrip" DockPanel.Dock="Top" Height="4" Background="Transparent"
+                Visibility="Collapsed" MouseEnter="HotStrip_MouseEnter" />
         <!-- Toolbar -->
-        <Border DockPanel.Dock="Top" Background="{DynamicResource ChromeBackground}"
+        <Border x:Name="ToolbarBar" DockPanel.Dock="Top" Background="{DynamicResource ChromeBackground}"
+                MouseLeave="ToolbarBar_MouseLeave"
                 BorderBrush="{DynamicResource ChromeBorder}" BorderThickness="0,0,0,1" Padding="8,6">
             <DockPanel LastChildFill="True">
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
@@ -46,6 +50,8 @@
                     <RadioButton x:Name="ThemeReadingButton" Style="{StaticResource ToolRadio}" GroupName="Theme"
                                  Content="&#xE736;" Click="Theme_Click" />
                     <Border Style="{StaticResource ToolSeparator}" />
+                    <ToggleButton x:Name="FullscreenButton" Style="{StaticResource ToolToggle}" Content="&#xE740;"
+                                  Click="FullscreenButton_Click" />
                     <TextBlock Text="&#xE774;" FontFamily="{StaticResource IconFont}" FontSize="15"
                                Foreground="{DynamicResource ChromeForeground}" VerticalAlignment="Center"
                                Margin="4,0,6,0" />

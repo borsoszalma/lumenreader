@@ -31,6 +31,14 @@ async function init() {
 
   $('btnOpen').onclick = chooseFile;
   $('btnToc').onclick = () => setToc(!state.settings.tocVisible);
+  $('btnFull').onclick = toggleFullscreen;
+  $('hotzone').addEventListener('mouseenter', () => document.body.classList.add('bar'));
+  document.querySelector('.toolbar').addEventListener('mouseleave', (e) => {
+    if (!document.querySelector('.toolbar').contains(document.activeElement) || e.clientY > 60)
+      document.body.classList.remove('bar');
+  });
+  document.addEventListener('fullscreenchange', syncFullscreen);
+  window.addEventListener('resize', syncFullscreen);
   $('btnPrev').onclick = () => goChapter(-1);
   $('btnNext').onclick = () => goChapter(1);
   document.querySelectorAll('.theme').forEach((b) => (b.onclick = () => setTheme(b.dataset.theme)));
@@ -58,6 +66,7 @@ function applyState(st) {
   $('lblOpen').textContent = S.Open;
   $('btnOpen').title = k('Open', 'Ctrl+O');
   $('btnToc').title = k('Contents', 'Ctrl+B');
+  $('btnFull').title = k('Fullscreen', 'F11');
   $('btnPrev').title = k('PrevChapter', 'Alt+←');
   $('btnNext').title = k('NextChapter', 'Alt+→');
   const tips = { light: k('ThemeLight', 'Alt+1'), dark: k('ThemeDark', 'Alt+2'), reading: k('ThemeReading', 'Alt+3') };
@@ -358,6 +367,7 @@ function onKey(e) {
   let handled = true;
   if (e.ctrlKey && !e.altKey && (key === 'o' || key === 'O')) chooseFile();
   else if (e.ctrlKey && !e.altKey && (key === 'b' || key === 'B')) setToc(!state.settings.tocVisible);
+  else if (key === 'F11') toggleFullscreen();
   else if (e.altKey && key === '1') setTheme('light');
   else if (e.altKey && key === '2') setTheme('dark');
   else if (e.altKey && key === '3') setTheme('reading');
@@ -365,6 +375,29 @@ function onKey(e) {
   else if (e.altKey && key === 'ArrowRight' && session && session.kind === 'epub') goChapter(1);
   else handled = false;
   if (handled) e.preventDefault();
+}
+
+// ------------------------------------------------------------------ full screen
+function isFullscreen() {
+  // Fullscreen API, or the browser's own F11 full screen (window as large as the screen)
+  return !!document.fullscreenElement ||
+    (Math.abs(window.innerWidth - screen.width) <= 1 && Math.abs(window.innerHeight - screen.height) <= 1);
+}
+
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+  } catch (e) { /* not allowed: ignore */ }
+  syncFullscreen();
+}
+
+function syncFullscreen() {
+  const fs = isFullscreen();
+  document.body.classList.toggle('fs', fs);
+  if (!fs) document.body.classList.remove('bar');
+  $('btnFull').querySelector('.ic').innerHTML = fs ? '&#xE73F;' : '&#xE740;';
+  $('btnFull').classList.toggle('on', fs);
 }
 
 // ------------------------------------------------------------------ drag & drop

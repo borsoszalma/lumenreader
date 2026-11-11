@@ -556,6 +556,7 @@ public partial class MainWindow : Window
         ThemeDarkButton.ToolTip = $"{Loc.T("ThemeDark")} (Ctrl+2)";
         ThemeReadingButton.ToolTip = $"{Loc.T("ThemeReading")} (Ctrl+3)";
         LanguageCombo.ToolTip = Loc.T("Language");
+        FullscreenButton.ToolTip = $"{Loc.T("Fullscreen")} (F11)";
         TocHeader.Text = Loc.T("Contents");
         NoTocText.Text = Loc.T("NoContents");
         BusyText.Text = Loc.T("Loading");
@@ -591,26 +592,50 @@ public partial class MainWindow : Window
         else if (alt && key == Key.Left) GoToChapter(-1);
         else if (alt && key == Key.Right) GoToChapter(1);
         else if (key == Key.F11) ToggleFullscreen();
-        else if (key == Key.Escape && WindowStyle == WindowStyle.None) ToggleFullscreen();
+        else if (key == Key.Escape && IsFullscreen) ToggleFullscreen();
         else handled = false;
 
         if (handled) e.Handled = true;
     }
 
+    private bool IsFullscreen => WindowStyle == WindowStyle.None;
+
+    /// <summary>F11: no title bar, no taskbar, no toolbar (it slides back at the top edge).</summary>
     private void ToggleFullscreen()
     {
-        if (WindowStyle == WindowStyle.None)
+        if (IsFullscreen)
         {
             WindowStyle = WindowStyle.SingleBorderWindow;
+            ResizeMode = ResizeMode.CanResize;
             WindowState = _stateBeforeFullscreen;
+            ToolbarBar.Visibility = Visibility.Visible;
+            HotStrip.Visibility = Visibility.Collapsed;
         }
         else
         {
             _stateBeforeFullscreen = WindowState;
             WindowStyle = WindowStyle.None;
+            ResizeMode = ResizeMode.NoResize;
             WindowState = WindowState.Normal; // needed so Maximized covers the taskbar
             WindowState = WindowState.Maximized;
+            ToolbarBar.Visibility = Visibility.Collapsed;
+            HotStrip.Visibility = Visibility.Visible;
         }
+        FullscreenButton.IsChecked = IsFullscreen;
+        FullscreenButton.Content = IsFullscreen ? "\uE73F" : "\uE740";
+    }
+
+    private void FullscreenButton_Click(object sender, RoutedEventArgs e) => ToggleFullscreen();
+
+    private void HotStrip_MouseEnter(object sender, MouseEventArgs e)
+    {
+        if (IsFullscreen) ToolbarBar.Visibility = Visibility.Visible;
+    }
+
+    private void ToolbarBar_MouseLeave(object sender, MouseEventArgs e)
+    {
+        // keep it open while the language list is dropped down
+        if (IsFullscreen && !LanguageCombo.IsDropDownOpen) ToolbarBar.Visibility = Visibility.Collapsed;
     }
 
     private void OnWindowDragOver(object sender, DragEventArgs e)
@@ -629,7 +654,7 @@ public partial class MainWindow : Window
 
     private void SaveWindowState()
     {
-        if (WindowStyle == WindowStyle.None) WindowStyle = WindowStyle.SingleBorderWindow;
+        if (IsFullscreen) ToggleFullscreen();
         _settings.WindowMaximized = WindowState == WindowState.Maximized;
         if (WindowState == WindowState.Normal)
         {
