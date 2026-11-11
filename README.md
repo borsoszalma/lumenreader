@@ -1,6 +1,13 @@
 # Lumen Reader
 
-Windowsos e-könyv- és dokumentumolvasó (WPF, .NET 10, WebView2), Microsoft Store-ba szánva.
+Windowsos e-könyv- és dokumentumolvasó, két változatban:
+
+| Változat | Mappa | Kinek |
+|---|---|---|
+| **C# / WPF** (.NET 10, WebView2) | `src/` | Microsoft Store-ba szánt, telepíthető alkalmazás (MSIX) |
+| **Python** (csak beépített könyvtárak) | `python/` | letöltött exe nélkül, a gépre telepített Pythonnal futtatható – lásd [python/README.md](python/README.md) |
+
+A leírás további része a C#-os változatról szól.
 
 ## Funkciók
 

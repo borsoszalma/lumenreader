@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Lumen Reader</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body data-theme="light">
+  <header class="toolbar">
+    <button id="btnOpen" class="tb tb-text"><span class="ic">&#xE8E5;</span><span id="lblOpen"></span></button>
+    <button id="btnToc" class="tb"><span class="ic">&#xE8FD;</span></button>
+    <span class="sep"></span>
+    <button id="btnPrev" class="tb" disabled><span class="ic">&#xE76B;</span></button>
+    <button id="btnNext" class="tb" disabled><span class="ic">&#xE76C;</span></button>
+    <div id="docTitle" class="doc-title"></div>
+    <div class="themes" role="radiogroup">
+      <button class="tb theme" data-theme="light"><span class="ic">&#xE706;</span></button>
+      <button class="tb theme" data-theme="dark"><span class="ic">&#xE708;</span></button>
+      <button class="tb theme" data-theme="reading"><span class="ic">&#xE736;</span></button>
+    </div>
+    <span class="sep"></span>
+    <span class="ic globe">&#xE774;</span>
+    <select id="lang"></select>
+  </header>
+
+  <main class="layout">
+    <aside id="toc" class="toc">
+      <h2 id="tocHeader"></h2>
+      <p id="noToc" class="muted" hidden></p>
+      <nav id="tocTree"></nav>
+    </aside>
+    <div id="splitter" class="splitter"></div>
+    <section class="content">
+      <iframe id="view" title="document" hidden></iframe>
+      <div id="welcome" class="welcome"></div>
+      <div id="busy" class="busy" hidden><div class="spinner"></div><span id="busyText"></span></div>
+    </section>
+  </main>
+
+  <div id="drop" class="drop" hidden><div id="dropText"></div></div>
+  <div id="toast" class="toast" hidden></div>
+  <input type="file" id="fileInput" hidden>
+  <script src="app.js"></script>
+</body>
+</html>

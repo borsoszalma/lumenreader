@@ -11,6 +11,24 @@ permissions:
   contents: write         # needed to create releases on tags
 
 jobs:
+  python:
+    name: Python edition (tests)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests (standard library only, no pip install)
+        run: python -m unittest discover -s python/tests -v
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: LumenReader-python
+          path: |
+            python/
+            !python/tests/
+
   build:
     runs-on: windows-latest
     steps:

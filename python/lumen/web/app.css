@@ -1,0 +1,84 @@
+:root { color-scheme: light; }
+body {
+  --bg: #f3f3f3; --panel: #fafafa; --page: #ffffff; --fg: #1f1f1f; --muted: #667085; --border: #e1e1e1;
+  --hover: rgba(0,0,0,.06); --sel: rgba(59,91,219,.15); --accent: #3b5bdb; --accent-fg: #fff; --chip: #eef1f6;
+  margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  font: 13px "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--fg);
+}
+body[data-theme="dark"] {
+  --bg: #202124; --panel: #1a1b1e; --page: #1b1d21; --fg: #e6e6e6; --muted: #9aa1ab; --border: #34363a;
+  --hover: rgba(255,255,255,.08); --sel: rgba(116,143,252,.22); --accent: #8ea6ff; --accent-fg: #10131a; --chip: #262a31;
+  color-scheme: dark;
+}
+body[data-theme="reading"] {
+  --bg: #eadfc7; --panel: #f0e6cf; --page: #f4ecd8; --fg: #3b2f20; --muted: #7a6a52; --border: #d6c5a3;
+  --hover: rgba(91,70,54,.10); --sel: rgba(160,104,42,.20); --accent: #8b4513; --accent-fg: #fff8ea; --chip: #ebe0c6;
+}
+
+.ic { font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets"; font-size: 15px; line-height: 1; }
+
+/* ---------- toolbar ---------- */
+.toolbar { display: flex; align-items: center; gap: 2px; padding: 6px 8px; border-bottom: 1px solid var(--border); background: var(--bg); }
+.tb { display: inline-flex; align-items: center; gap: 8px; min-width: 34px; height: 32px; justify-content: center;
+      padding: 0 9px; border: 0; border-radius: 6px; background: transparent; color: var(--fg); font: inherit; cursor: pointer; }
+.tb:hover, .tb:focus-visible { background: var(--hover); outline: none; }
+.tb:disabled { opacity: .35; cursor: default; background: transparent; }
+.tb.on { background: var(--sel); color: var(--accent); }
+.tb-text { padding: 0 12px 0 10px; }
+.sep { width: 1px; height: 20px; margin: 0 8px; background: var(--border); }
+.doc-title { flex: 1; min-width: 0; padding: 0 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .85; }
+.themes { display: flex; gap: 2px; }
+.globe { margin: 0 6px 0 4px; }
+select { font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; min-width: 170px; }
+
+/* ---------- layout ---------- */
+.layout { flex: 1; display: flex; min-height: 0; }
+.toc { width: 290px; flex: none; overflow: auto; background: var(--panel); border-right: 1px solid var(--border); padding-bottom: 12px; }
+.toc h2 { font-size: 13px; font-weight: 600; margin: 14px 16px 8px; }
+.toc .muted { margin: 2px 16px; font-size: 12px; color: var(--muted); }
+body.toc-hidden .toc, body.toc-hidden .splitter { display: none; }
+.splitter { width: 5px; flex: none; cursor: col-resize; margin-left: -3px; z-index: 2; }
+body.resizing iframe { pointer-events: none; }
+body.resizing { cursor: col-resize; user-select: none; }
+
+.content { flex: 1; position: relative; min-width: 300px; background: var(--page); }
+.content iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--page); }
+.content iframe.pdf-dark { filter: invert(.9) hue-rotate(180deg); }
+.content iframe.pdf-reading { filter: sepia(.45) saturate(.9) brightness(.96); }
+
+/* ---------- table of contents tree ---------- */
+.tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+.tree ul { padding-left: 14px; }
+.tree .row { display: flex; align-items: center; border-radius: 6px; margin: 0 6px; }
+.tree .row:hover { background: var(--hover); }
+.tree .row.active { background: var(--sel); }
+.tree .tw { width: 20px; flex: none; text-align: center; cursor: pointer; color: var(--muted); font-size: 10px; user-select: none; }
+.tree .tw.leaf { cursor: default; }
+.tree .lbl { flex: 1; min-width: 0; padding: 5px 6px 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.tree li.collapsed > ul { display: none; }
+
+/* ---------- welcome ---------- */
+.welcome { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: auto; }
+.welcome main { max-width: 560px; margin: 32px; padding: 40px 48px; text-align: center; border: 2px dashed var(--border); border-radius: 20px; }
+.welcome img { width: 72px; height: 72px; }
+.welcome h1 { font: 600 26px "Segoe UI Variable Display", "Segoe UI", sans-serif; margin: 16px 0 6px; }
+.welcome h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 30px 0 10px; font-weight: 600; }
+.welcome p { color: var(--muted); margin: 0 0 22px; font-size: 14px; }
+.welcome .primary { font: inherit; font-size: 14px; font-weight: 600; padding: 9px 26px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-fg); cursor: pointer; }
+.welcome .primary:hover { filter: brightness(1.08); }
+.formats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.formats span { background: var(--chip); padding: 4px 11px; border-radius: 999px; }
+.keys { margin: 0 auto; border-collapse: collapse; text-align: left; }
+.keys td { padding: 4px 10px; color: var(--muted); }
+.keys td:first-child { text-align: right; white-space: nowrap; color: var(--fg); }
+kbd { font: 12px inherit; background: var(--chip); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; }
+
+/* ---------- overlays ---------- */
+.busy { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; background: var(--page); font-size: 15px; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.drop { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: rgba(92,124,250,.10); }
+.drop div { pointer-events: none; padding: 28px 40px; border: 3px dashed #5c7cfa; border-radius: 16px; background: var(--panel); font-size: 18px; font-weight: 600; }
+.toast { position: fixed; right: 18px; bottom: 18px; z-index: 20; max-width: 440px; padding: 14px 18px; border-radius: 10px; white-space: pre-line;
+         background: #b42318; color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+[hidden] { display: none !important; }
