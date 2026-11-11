@@ -1,0 +1,61 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']          # v1.2.3 -> package version 1.2.3.0 + GitHub Release
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write         # needed to create releases on tags
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build (compile check)
+        run: dotnet build src/LumenReader/LumenReader.csproj -c Release
+
+      - name: Compute version
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') {
+            $v = $env:GITHUB_REF_NAME.TrimStart('v')
+          } else {
+            $v = "0.1.$env:GITHUB_RUN_NUMBER"
+          }
+          "version=$v.0" >> $env:GITHUB_OUTPUT
+
+      # Store identity values come from repository *variables* (Settings → Secrets and variables → Actions → Variables).
+      - name: Package MSIX
+        if: github.event_name != 'pull_request'
+        shell: pwsh
+        run: >
+          ./build/pack-msix.ps1
+          -Version '${{ steps.ver.outputs.version }}'
+          -IdentityName '${{ vars.MSIX_IDENTITY_NAME || 'LumenReader' }}'
+          -Publisher '${{ vars.MSIX_PUBLISHER || 'CN=LumenReaderDev' }}'
+          -PublisherDisplayName '${{ vars.MSIX_PUBLISHER_DISPLAY_NAME || 'Lumen Reader' }}'
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: LumenReader-${{ steps.ver.outputs.version }}
+          path: |
+            artifacts/*.msixupload
+            artifacts/*.msixbundle
+
+      - name: GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.msixupload
+          generate_release_notes: true

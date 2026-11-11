@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSIX manifest template. build/pack-msix.ps1 replaces the $TOKENS$.
+  For the Microsoft Store, IDENTITY and PUBLISHER must be the exact values from
+  Partner Center → your app → Product identity (Package/Identity/Name and Package/Identity/Publisher).
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity Name="$IDENTITY$" Publisher="$PUBLISHER$" Version="$VERSION$" ProcessorArchitecture="$ARCH$" />
+
+  <Properties>
+    <DisplayName>Lumen Reader</DisplayName>
+    <PublisherDisplayName>$PUBLISHERDISPLAYNAME$</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-US" />
+    <Resource Language="de-DE" />
+    <Resource Language="fr-FR" />
+    <Resource Language="es-ES" />
+    <Resource Language="it-IT" />
+    <Resource Language="pt-PT" />
+    <Resource Language="nl-NL" />
+    <Resource Language="sv-SE" />
+    <Resource Language="pl-PL" />
+    <Resource Language="cs-CZ" />
+    <Resource Language="sk-SK" />
+    <Resource Language="hu-HU" />
+    <Resource Language="ro-RO" />
+    <Resource Language="hr-HR" />
+    <Resource Language="sl-SI" />
+    <Resource Language="sr-Latn-RS" />
+    <Resource Language="lt-LT" />
+    <Resource Language="lv-LV" />
+    <Resource Language="et-EE" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App" Executable="LumenReader.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Lumen Reader"
+        Description="E-book and document reader: EPUB, PDF, DOCX, DOC, RTF, Markdown, HTML."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="lumendocuments">
+            <uap:DisplayName>Lumen Reader</uap:DisplayName>
+            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.epub</uap:FileType>
+              <uap:FileType>.pdf</uap:FileType>
+              <uap:FileType>.docx</uap:FileType>
+              <uap:FileType>.doc</uap:FileType>
+              <uap:FileType>.rtf</uap:FileType>
+              <uap:FileType>.md</uap:FileType>
+              <uap:FileType>.markdown</uap:FileType>
+              <uap:FileType>.html</uap:FileType>
+              <uap:FileType>.htm</uap:FileType>
+              <uap:FileType>.xhtml</uap:FileType>
+              <uap:FileType>.txt</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
