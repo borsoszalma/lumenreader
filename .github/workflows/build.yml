@@ -46,8 +46,9 @@ jobs:
           -PublisherDisplayName '${{ vars.MSIX_PUBLISHER_DISPLAY_NAME || 'Lumen Reader' }}'
 
       # Portable build: unzip and run LumenReader.exe, no installation (for testing without the Store).
-      - name: Portable zip
-        if: github.event_name != 'pull_request'
+      # Artifacts get zipped by GitHub, so the folders are uploaded directly; the zips are for releases only.
+      - name: Portable zip (for releases)
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         run: |
           foreach ($arch in 'x64','arm64') {
@@ -58,13 +59,13 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           name: LumenReader-portable-x64
-          path: artifacts/LumenReader-portable-x64.zip
+          path: artifacts/publish-x64/
 
       - uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
           name: LumenReader-portable-arm64
-          path: artifacts/LumenReader-portable-arm64.zip
+          path: artifacts/publish-arm64/
 
       - uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
