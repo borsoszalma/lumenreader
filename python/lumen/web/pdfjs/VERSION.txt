@@ -1,0 +1,1 @@
+pdf.js 5.7.284 (https://github.com/mozilla/pdf.js/releases/tag/v5.7.284), Apache-2.0 – see LICENSE

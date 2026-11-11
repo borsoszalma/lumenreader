@@ -80,6 +80,7 @@ class _Converter:
         self.ordered_cache: dict[tuple[str, int], bool] = {}
         self.out: list[str] = []
         self.lists: list[str] = []
+        self.para_index = -1   # data-p: lets notes be written back into the .docx
 
     def run(self) -> str:
         body = self.doc.find(w("body"))
@@ -106,6 +107,8 @@ class _Converter:
                 self.blocks(el)
 
     def paragraph(self, p: ET.Element) -> None:
+        self.para_index += 1
+        dp = f' data-p="{self.para_index}"'
         ppr = p.find(w("pPr"))
         level = self.heading_level(ppr)
         inner = self.inlines(p)
@@ -114,7 +117,7 @@ class _Converter:
             if num:
                 num_id, ilvl = num
                 self.open_list(ilvl + 1, "ol" if self.is_ordered(num_id, ilvl) else "ul")
-                self.out.append(f"<li>{inner}</li>")
+                self.out.append(f"<li{dp}>{inner}</li>")
                 return
         self.close_lists(0)
         jc = _val(ppr.find(w("jc")) if ppr is not None else None)
@@ -122,11 +125,11 @@ class _Converter:
                  "distribute": "justify"}.get(jc or "", "")
         style = f' style="text-align:{align}"' if align else ""
         if level:
-            self.out.append(f"<h{level}{style}>{inner}</h{level}>")
+            self.out.append(f"<h{level}{dp}{style}>{inner}</h{level}>")
         elif _is_blank(inner):
-            self.out.append('<p class="lumen-empty"></p>')
+            self.out.append(f'<p class="lumen-empty"{dp}>{inner}</p>')
         else:
-            self.out.append(f"<p{style}>{inner}</p>")
+            self.out.append(f"<p{dp}{style}>{inner}</p>")
 
     def table(self, tbl: ET.Element) -> None:
         self.out.append("<table>")

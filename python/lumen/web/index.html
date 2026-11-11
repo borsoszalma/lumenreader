@@ -8,6 +8,7 @@
 </head>
 <body data-theme="light">
   <header class="toolbar">
+    <button id="btnHome" class="tb"><span class="ic">&#xE80F;</span></button>
     <button id="btnOpen" class="tb tb-text"><span class="ic">&#xE8E5;</span><span id="lblOpen"></span></button>
     <button id="btnToc" class="tb"><span class="ic">&#xE8FD;</span></button>
     <span class="sep"></span>
@@ -27,17 +28,56 @@
 
   <main class="layout">
     <aside id="toc" class="toc">
-      <h2 id="tocHeader"></h2>
-      <p id="noToc" class="muted" hidden></p>
-      <nav id="tocTree"></nav>
+      <div class="tabs">
+        <button id="tabContents" class="tab on"></button>
+        <button id="tabNotes" class="tab"><span id="tabNotesLabel"></span> <span id="notesCount" class="count"></span></button>
+      </div>
+      <div id="panelContents">
+        <p id="noToc" class="muted" hidden></p>
+        <nav id="tocTree"></nav>
+      </div>
+      <div id="panelNotes" hidden>
+        <p id="noNotes" class="muted"></p>
+        <div id="notesList"></div>
+        <div id="wordInfo" class="word-info" hidden></div>
+      </div>
     </aside>
     <div id="splitter" class="splitter"></div>
     <section class="content">
       <iframe id="view" title="document" hidden></iframe>
       <div id="welcome" class="welcome"></div>
       <div id="busy" class="busy" hidden><div class="spinner"></div><span id="busyText"></span></div>
+      <footer id="status" class="status" hidden>
+        <span id="statusText"></span>
+        <div class="bar"><div id="statusBar"></div></div>
+      </footer>
     </section>
   </main>
+
+  <!-- shown above a text selection in the document -->
+  <div id="selPopup" class="popup sel-popup" hidden>
+    <button class="dot" data-color="yellow"></button>
+    <button class="dot" data-color="green"></button>
+    <button class="dot" data-color="blue"></button>
+    <button class="dot" data-color="pink"></button>
+    <span class="sep"></span>
+    <button id="selNote" class="tb"><span class="ic">&#xE70B;</span></button>
+  </div>
+
+  <!-- note editor for a highlight -->
+  <div id="editor" class="popup editor" hidden>
+    <div class="quote" id="edQuote"></div>
+    <textarea id="edNote" rows="4"></textarea>
+    <div class="row">
+      <button class="dot" data-color="yellow"></button>
+      <button class="dot" data-color="green"></button>
+      <button class="dot" data-color="blue"></button>
+      <button class="dot" data-color="pink"></button>
+      <span class="grow"></span>
+      <button id="edDelete" class="tb"><span class="ic">&#xE74D;</span></button>
+      <button id="edClose" class="btn"></button>
+    </div>
+  </div>
 
   <div id="hotzone" class="hotzone"></div>
   <div id="drop" class="drop" hidden><div id="dropText"></div></div>

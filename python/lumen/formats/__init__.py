@@ -17,8 +17,9 @@ def is_supported(path: str) -> bool:
     return os.path.splitext(path)[1].lower() in EXTENSIONS
 
 
-def load(path: str, t: Callable[[str], str]) -> Session:
-    """t(key) returns a localized string (used for generated labels and notes)."""
+def load(path: str, t: Callable[[str], str], cache_dir: str = "") -> Session:
+    """t(key) returns a localized string (used for generated labels and notes).
+    cache_dir keeps the .docx made from a legacy .doc, so notes can be written into a Word copy."""
     ext = os.path.splitext(path)[1].lower()
     title = os.path.splitext(os.path.basename(path))[0]
     folder = os.path.dirname(os.path.abspath(path))
@@ -36,10 +37,12 @@ def load(path: str, t: Callable[[str], str]) -> Session:
         return session
 
     if ext == ".docx":
-        return FlowSession(path, title, wrap(title, docx.convert(path)), folder)
+        session = FlowSession(path, title, wrap(title, docx.convert(path)), folder)
+        session.docx_source = path
+        return session
 
     if ext == ".doc":
-        return _load_doc(path, title, folder, t)
+        return _load_doc(path, title, folder, t, cache_dir)
 
     if ext == ".rtf":
         return FlowSession(path, title, wrap(title, rtf.convert(path)), folder)
@@ -60,19 +63,27 @@ def load(path: str, t: Callable[[str], str]) -> Session:
     raise DocumentError("UnsupportedFormat", ext)
 
 
-def _load_doc(path: str, title: str, folder: str, t) -> Session:
+def _load_doc(path: str, title: str, folder: str, t, cache_dir: str = "") -> Session:
     kind = doc.sniff(path)
     if kind == "rtf":
         return FlowSession(path, title, wrap(title, rtf.convert(path)), folder)
     if kind == "zip":
-        return FlowSession(path, title, wrap(title, docx.convert(path)), folder)
+        session = FlowSession(path, title, wrap(title, docx.convert(path)), folder)
+        session.docx_source = path
+        return session
     if kind == "html":
         return HtmlSession(path, title)
 
     converted, tmp = doc.convert_to_docx(path)
     if converted:
         try:
-            return FlowSession(path, title, wrap(title, docx.convert(converted)), folder)
+            session = FlowSession(path, title, wrap(title, docx.convert(converted)), folder)
+            if cache_dir:
+                os.makedirs(cache_dir, exist_ok=True)
+                kept = os.path.join(cache_dir, title + ".docx")
+                shutil.copyfile(converted, kept)
+                session.docx_source = kept
+            return session
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
 

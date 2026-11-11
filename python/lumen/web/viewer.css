@@ -51,3 +51,16 @@ body.lumen-kind-epub img, body.lumen-kind-epub svg { max-width: 100%; height: au
 :root[data-lumen-theme="reading"] body:not(.lumen-kind-welcome) a, :root[data-lumen-theme="reading"] body:not(.lumen-kind-welcome) a * { color: #8b4513 !important; }
 :root[data-lumen-theme="reading"] body:not(.lumen-kind-pdf) pre { background-color: #ebe0c6 !important; }
 :root[data-lumen-theme="reading"] body.lumen-kind-pdf { background: #e4d9bf !important; }
+
+/* ---------- highlights and notes (specific enough to beat the theme overrides above) ---------- */
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl { color: inherit !important; border-radius: 2px; padding: 0; cursor: pointer; }
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl[data-c="yellow"] { background-color: rgba(255, 212, 0, .45) !important; }
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl[data-c="green"] { background-color: rgba(64, 200, 90, .40) !important; }
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl[data-c="blue"] { background-color: rgba(60, 150, 255, .38) !important; }
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl[data-c="pink"] { background-color: rgba(255, 90, 170, .38) !important; }
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl.note { border-bottom: 2px solid rgba(200, 90, 0, .9) !important; }
+:root[data-lumen-theme] body mark.lumen-hl.lumen-hl.note.last::after { content: "✎"; font-size: .7em; vertical-align: super; margin-left: 1px; }
+:root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="yellow"] { background-color: rgba(255, 212, 0, .30) !important; }
+:root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="green"] { background-color: rgba(64, 200, 90, .30) !important; }
+:root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="blue"] { background-color: rgba(60, 150, 255, .32) !important; }
+:root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="pink"] { background-color: rgba(255, 90, 170, .32) !important; }

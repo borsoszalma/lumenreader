@@ -11,7 +11,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
 from lumen import formats, i18n, settings as settings_mod  # noqa: E402
-from lumen.formats import doc, docx, markdown, pdf, rtf  # noqa: E402
+from lumen.formats import doc, docx, docx_export, markdown, pdf, rtf  # noqa: E402
+from lumen.library import Library  # noqa: E402
 from lumen.server import ReaderApp, start_server  # noqa: E402
 
 FX = os.path.join(HERE, "fixtures")
@@ -41,19 +42,19 @@ def toc_titles(items):
 class FormatTests(unittest.TestCase):
     def test_docx_headings_lists_tables_images(self):
         html = docx.convert(fx("sample.docx"))
-        self.assertIn("<h1>Első fejezet</h1>", html)
-        self.assertIn("<h2>Alfejezet táblázattal</h2>", html)
+        self.assertRegex(html, r'<h1 data-p="\d+">Első fejezet</h1>')
+        self.assertRegex(html, r'<h2 data-p="\d+">Alfejezet táblázattal</h2>')
         self.assertIn("<strong>félkövér</strong>", html)
-        self.assertIn("<ul><li>Első pont</li>", html)
-        self.assertIn("<ol><li>Egyes</li>", html)
+        self.assertRegex(html, r'<ul><li data-p="\d+">Első pont</li>')
+        self.assertRegex(html, r'<ol><li data-p="\d+">Egyes</li>')
         self.assertIn("<table>", html)
         self.assertIn("data:image/png;base64,", html)
 
     def test_docx_localized_style_ids(self):
         # Hungarian Word uses style ids like "Cmsor1"; the English built-in name must still be recognised
         html = docx.convert(fx("sample_hu_styles.docx"))
-        self.assertIn("<h1>Első fejezet</h1>", html)
-        self.assertIn("<h2>Alfejezet táblázattal</h2>", html)
+        self.assertRegex(html, r'<h1 data-p="\d+">Első fejezet</h1>')
+        self.assertRegex(html, r'<h2 data-p="\d+">Alfejezet táblázattal</h2>')
 
     def test_rtf(self):
         html = rtf.convert(fx("sample.rtf"))
@@ -151,6 +152,85 @@ class FormatTests(unittest.TestCase):
     def test_unsupported(self):
         with self.assertRaises(formats.DocumentError):
             formats.load(fx("pic.png"), t)
+
+
+def paragraph_texts(html):
+    """data-p index -> plain text, as the reader sees it."""
+    import re
+    import html as h
+    out = {}
+    for m in re.finditer(r'<(p|h\d|li)[^>]*data-p="(\d+)"[^>]*>(.*?)</\1>', html):
+        out[int(m.group(2))] = h.unescape(re.sub(r"<[^>]+>", "", m.group(3)))
+    return out
+
+
+class WordExportTests(unittest.TestCase):
+    def test_comments_and_highlights(self):
+        import re
+        html = docx.convert(fx("sample.docx"))
+        paras = paragraph_texts(html)
+        p = next(i for i, t in paras.items() if t.startswith("Ez egy"))
+        text = paras[p]
+        s0 = text.index("félkövér")
+        anns = [
+            # crosses run boundaries: "félkövér és egy dőlt"
+            {"color": "green", "note": "Első megjegyzés\nmásodik sor",
+             "docx": {"sp": p, "so": s0, "ep": p, "eo": text.index("dőlt") + 4}},
+            # highlight only, spanning two paragraphs
+            {"color": "yellow", "note": "", "docx": {"sp": p + 1, "so": 2, "ep": p + 2, "eo": 3}},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            out = os.path.join(tmp, "out.docx")
+            self.assertEqual(docx_export.export(fx("sample.docx"), out, anns, author="Teszt Elek"), 2)
+            import zipfile
+            with zipfile.ZipFile(out) as z:
+                doc_xml = z.read("word/document.xml").decode("utf-8")
+                comments = z.read("word/comments.xml").decode("utf-8")
+                rels = z.read("word/_rels/document.xml.rels").decode("utf-8")
+                ct = z.read("[Content_Types].xml").decode("utf-8")
+            self.assertIn("commentRangeStart", doc_xml)
+            self.assertIn("commentReference", doc_xml)
+            self.assertIn('w:highlight w:val="green"', doc_xml)
+            self.assertIn('w:highlight w:val="yellow"', doc_xml)
+            self.assertIn("Első megjegyzés", comments)
+            self.assertIn('w:author="Teszt Elek"', comments)
+            self.assertIn("comments.xml", rels)
+            self.assertIn("/word/comments.xml", ct)
+            # original namespace declarations are kept (Word needs them for mc:Ignorable)
+            self.assertIn("xmlns:w=", doc_xml[:3000])
+            # the visible text is unchanged and still converts the same way
+            self.assertEqual(paragraph_texts(docx.convert(out))[p], text)
+            # the commented range covers exactly the selected words
+            body = re.sub(r"<w:del\b.*?</w:del>", "", doc_xml, flags=re.S)
+            seg = body[body.index("commentRangeStart"):body.index("commentRangeEnd")]
+            self.assertEqual("".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", seg)), "félkövér és egy dőlt")
+
+    def test_doc_converted_by_word_keeps_original(self):
+        before = open(fx("sample.docx"), "rb").read()
+        with tempfile.TemporaryDirectory() as tmp:
+            docx_export.export(fx("sample.docx"), os.path.join(tmp, "x.docx"), [])
+        self.assertEqual(before, open(fx("sample.docx"), "rb").read())
+
+
+class LibraryTests(unittest.TestCase):
+    def test_recent_position_notes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            lib = Library(tmp)
+            key = lib.key_for(fx("sample.md"))
+            lib.touch(key, fx("sample.md"), "sample", "flow")
+            lib.set_position(key, {"ratio": 0.4}, 0.4)
+            lib.set_annotations(key, [{"id": "a", "quote": "x"}])
+            lib2 = Library(tmp)  # reload from disk
+            self.assertEqual(lib2.get(key)["position"], {"ratio": 0.4})
+            self.assertEqual(lib2.recent()[0]["notes"], 1)
+            self.assertAlmostEqual(lib2.recent()[0]["progress"], 0.4)
+
+    def test_upload_copy_survives(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            lib = Library(tmp)
+            path = lib.store_upload(fx("sample.epub"), "könyv.epub")
+            self.assertTrue(os.path.isfile(path))
+            self.assertTrue(lib.is_library_copy(path))
 
 
 class ServerTests(unittest.TestCase):

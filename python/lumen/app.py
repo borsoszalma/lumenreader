@@ -52,6 +52,11 @@ def main(argv: list[str]) -> int:
     start_file = next((a for a in argv if os.path.isfile(a)), None)
     if start_file:
         app.open_path(os.path.abspath(start_file))
+    elif app.settings.get("reopenLast", True):
+        # continue where the reader stopped last time
+        last = next((r for r in app.library.recent() if r["exists"]), None)
+        if last:
+            app.open_key(last["key"])
 
     server, url = start_server(app)
     log.info("listening on %s", url.split("/", 3)[2])

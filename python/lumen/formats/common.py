@@ -96,6 +96,11 @@ _MIME_EXTRA = {
     ".otf": "font/otf",
     ".webp": "image/webp",
     ".md": "text/plain",
+    ".mjs": "text/javascript",
+    ".wasm": "application/wasm",
+    ".bcmap": "application/octet-stream",
+    ".pfb": "application/octet-stream",
+    ".icc": "application/octet-stream",
 }
 
 
@@ -130,6 +135,7 @@ class Session:
         self.toc: Optional[list[TocItem]] = None   # None -> viewer collects headings
         self.spine: list[str] = []
         self.pages = 0
+        self.docx_source: Optional[str] = None   # .docx the notes can be written into
 
     def serve(self, rel: str) -> Optional[tuple[bytes, str]]:
         raise NotImplementedError
@@ -146,6 +152,7 @@ class Session:
             "toc": None if self.toc is None else [t.to_json() for t in self.toc],
             "spine": self.spine,
             "pages": self.pages,
+            "word": self.docx_source is not None,
         }
 
 

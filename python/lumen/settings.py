@@ -31,7 +31,8 @@ def system_prefers_dark() -> bool:
 
 
 def load() -> dict:
-    settings = {"theme": None, "language": "auto", "tocVisible": True, "tocWidth": 290, "lastFolder": None}
+    settings = {"theme": None, "language": "auto", "tocVisible": True, "tocWidth": 290, "lastFolder": None,
+                "reopenLast": True}
     try:
         with open(_file(), encoding="utf-8") as f:
             settings.update(json.load(f))
