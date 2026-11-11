@@ -156,14 +156,14 @@ internal static class LegacyDocLoader
 
     internal static string ExtractText(string path)
     {
-        using var cf = new CompoundFile(path);
-        var wd = cf.RootStorage.GetStream("WordDocument").GetData();
+        using var root = RootStorage.OpenRead(path);
+        var wd = ReadStream(root, "WordDocument");
         if (BitConverter.ToUInt16(wd, 0) != 0xA5EC) throw new DocumentLoadException(Loc.T("ErrorTitle"));
 
         var flags = BitConverter.ToUInt16(wd, 0x0A);
         if ((flags & 0x0100) != 0) throw new DocumentLoadException(Loc.T("PasswordProtected")); // fEncrypted
         var tableName = (flags & 0x0200) != 0 ? "1Table" : "0Table";                        // fWhichTblStm
-        var table = cf.RootStorage.GetStream(tableName).GetData();
+        var table = ReadStream(root, tableName);
 
         var ccpText = BitConverter.ToInt32(wd, 0x4C);  // FibRgLw97.ccpText (main document only)
         var fcClx = BitConverter.ToInt32(wd, 0x1A2);   // FibRgFcLcb97.fcClx
@@ -207,6 +207,14 @@ internal static class LegacyDocLoader
         }
 
         return CleanFieldsAndControls(raw.ToString());
+    }
+
+    private static byte[] ReadStream(RootStorage root, string name)
+    {
+        using var stream = root.OpenStream(name);
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        return ms.ToArray();
     }
 
     /// <summary>Hides field codes (0x13 code 0x14 result 0x15) and maps Word control characters.</summary>
