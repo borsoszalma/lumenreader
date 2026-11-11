@@ -46,5 +46,17 @@
   "ShowInFolder": "Pokaži v mapi",
   "FileMissing": "Datoteke ni več: {0}",
   "RemoveFromList": "Odstrani s seznama",
-  "WordNotesInfo": "Označbe in opombe se shranijo tudi kot komentarji Worda v kopijo:"
+  "WordNotesInfo": "Označbe in opombe se shranijo tudi kot komentarji Worda v kopijo:",
+  "Search": "Iskanje",
+  "SearchPlaceholder": "Iskanje v dokumentu…",
+  "SearchCount": "{0} od {1}",
+  "NoMatches": "Ni zadetkov",
+  "PdfNotesInfo": "Označbe in opombe se shranijo tudi kot komentarji PDF v kopijo:",
+  "SavedCopy": "Opombe shranjene v: {0}",
+  "CopyChanged": "Kopija z opombami je bila spremenjena zunaj aplikacije, zato ni bila prepisana. Nova kopija: {0}",
+  "Backup": "Varnostna kopija",
+  "BackupExport": "Shrani opombe in mesta branja",
+  "BackupImport": "Obnovi iz varnostne kopije",
+  "BackupImported": "Obnovljeno: podatki {0} dokumentov",
+  "BackupInvalid": "To ni datoteka varnostne kopije Lumen Reader."
 }

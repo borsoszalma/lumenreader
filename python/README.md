@@ -33,7 +33,17 @@ A program a Windowsba épített **Microsoft Edge** böngészőt használja megje
 - **Legutóbbi dokumentumok:** a kezdőlapon (🏠 gomb) láthatók, olvasottsági százalékkal és a jegyzetek számával. Innen egy kattintással újranyithatók.
 - **Haladás:** az alsó sávon a százalék, PDF-nél az oldalszám („12. oldal / 340”), EPUB-nál a fejezet is.
 - **Kiemelés és megjegyzés:** jelölj ki szöveget, és válassz színt (sárga, zöld, kék, rózsaszín), vagy a ✎ gombbal írj hozzá megjegyzést. A kiemelésre kattintva szerkeszthető vagy törölhető. Az oldalsó panel *Jegyzetek* fülén az összes jegyzet listája látható, kattintásra odaugrik.
-- **Word-dokumentumoknál** (.docx, és .doc is, ha a gépen van Word vagy LibreOffice) a kiemelések és megjegyzések egy külön másolatba is mentődnek, például `Dokumentum (megjegyzésekkel).docx`. Ebben a megjegyzések valódi Word-megjegyzésbuborékként, a kiemelések Word-kiemelésként jelennek meg. Az eredeti fájl érintetlen marad. A másolat az eredeti mellé kerül; ráhúzott fájlnál, vagy ha oda nem lehet írni, a `Dokumentumok\Lumen Reader` mappába.
+- **Jegyzetes másolat:**
+  - **Word-dokumentumoknál** (.docx, és .doc is, ha a gépen van Word vagy LibreOffice) a kiemelések és megjegyzések egy külön másolatba is mentődnek: `Dokumentum (megjegyzésekkel).docx`. Ebben a megjegyzések valódi Word-megjegyzésbuborékként, a kiemelések Word-kiemelésként jelennek meg.
+  - **PDF-nél** ugyanígy készül egy `(megjegyzésekkel).pdf` másolat, szabványos PDF-kiemelésekkel és -megjegyzésekkel, amelyek Acrobatban, Edge-ben és más PDF-olvasókban is látszanak.
+  - Az eredeti fájl mindkét esetben érintetlen marad. A másolat az eredeti mellé kerül; ráhúzott fájlnál, vagy ha oda nem lehet írni, a `Dokumentumok\Lumen Reader` mappába.
+  - **Ha a másolatot közben máshol módosították** (például Wordben beleírtál), a program nem írja felül, hanem újat készít („… (megjegyzésekkel 2).docx”), és szól erről.
+- **Keresés (Ctrl+F):**
+  - Minden találat sárgán kiemelve jelenik meg, az aktuális narancssárgán; Enter vagy F3 a következő, Shift+Enter a előző találat.
+  - A görgetősáv mellett jelek mutatják, hol vannak a találatok.
+  - A navigációs panelen minden fejezet mellett egy kis szám jelzi, hány találat van benne. EPUB-nál a teljes könyvben, PDF-nél az összes oldalon keres.
+- **Hol tartasz:** a navigációs panel kiemeli azt a fejezetet, amelyiket éppen olvasod, és görgetés közben követi.
+- **Biztonsági mentés:** a kezdőlapon egy kattintással elmentheted az összes jegyzetet és olvasási helyet egy fájlba, és máshol (vagy új gépen) visszatöltheted.
 - **Nyelvek:** 19 nyelv, alapból a Windows nyelvét használja, ha az nem érhető el, angolt. A jobb felső sarokban átállítható.
 
 ## Hogyan működik
@@ -52,6 +62,7 @@ lumen/formats/         formátumok (saját kód, csak beépített könyvtárakka
   pdf.py               PDF-könyvjelzők és oldalszám (saját PDF-objektumolvasó)
 lumen/library.py       legutóbbi dokumentumok, olvasási hely, jegyzetek
 lumen/formats/docx_export.py  jegyzetek → Word-megjegyzések egy .docx-másolatban
+lumen/formats/pdf_export.py   jegyzetek → PDF-kiemelések és -megjegyzések egy .pdf-másolatban
 lumen/web/             felület (HTML/CSS/JS), témák, PDF-néző
 lumen/web/pdfjs/       Mozilla pdf.js 5.7 (Apache-2.0), változtatás nélkül
 lumen/strings/         fordítások (ugyanazok a fájlok, mint a C#-os változatnál)
@@ -62,8 +73,8 @@ A beállítások itt vannak: `%LOCALAPPDATA%\LumenReaderPy\settings.json`. Az ol
 
 ## Korlátok
 
-- **PDF:** a jegyzetek a programban mentődnek, a PDF-fájlba nem.
-- **Jegyzetek EPUB-ban, Markdownban, HTML-ben és RTF-ben:** ezek is csak a programban mentődnek. Word-másolat csak Word-dokumentumokhoz készül.
+- **Jegyzetek EPUB-ban, Markdownban, HTML-ben és RTF-ben:** ezek csak a programban mentődnek (és a biztonsági mentésben). Jegyzetes másolat Word- és PDF-dokumentumokhoz készül.
+- **Jelszóval védett PDF:** olvasható, a jegyzetek is működnek, de jegyzetes PDF-másolat nem készül hozzá.
 - **DOC:** a teljes formázáshoz Microsoft Word vagy LibreOffice kell a gépen. Ha egyik sincs, a program csak a szöveget mutatja.
 - **Feltöltött (ráhúzott) Markdown és HTML:** ráhúzáskor a böngésző nem adja át a fájl helyét, ezért az ezekben relatív hivatkozással szereplő képek nem jelennek meg. A *Megnyitás* gombbal megnyitva igen.
 

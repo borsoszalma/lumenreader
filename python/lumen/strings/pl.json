@@ -46,5 +46,17 @@
   "ShowInFolder": "Pokaż w folderze",
   "FileMissing": "Nie znaleziono pliku: {0}",
   "RemoveFromList": "Usuń z listy",
-  "WordNotesInfo": "Zakreślenia i notatki są też zapisywane jako komentarze Word w kopii:"
+  "WordNotesInfo": "Zakreślenia i notatki są też zapisywane jako komentarze Word w kopii:",
+  "Search": "Szukaj",
+  "SearchPlaceholder": "Szukaj w dokumencie…",
+  "SearchCount": "{0} z {1}",
+  "NoMatches": "Brak wyników",
+  "PdfNotesInfo": "Zakreślenia i notatki są też zapisywane jako komentarze PDF w kopii:",
+  "SavedCopy": "Notatki zapisane w: {0}",
+  "CopyChanged": "Kopia z notatkami została zmieniona poza aplikacją, więc nie została nadpisana. Nowa kopia: {0}",
+  "Backup": "Kopia zapasowa",
+  "BackupExport": "Zapisz notatki i miejsca czytania",
+  "BackupImport": "Przywróć z kopii zapasowej",
+  "BackupImported": "Przywrócono: dane {0} dokumentów",
+  "BackupInvalid": "To nie jest plik kopii zapasowej Lumen Reader."
 }

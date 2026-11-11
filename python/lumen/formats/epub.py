@@ -159,3 +159,49 @@ def _nav_points(parent, base) -> list[TocItem]:
         item.children = _nav_points(np, base)
         items.append(item)
     return items
+
+
+# ---------------------------------------------------------------- search support
+
+class _BodyText(__import__("html.parser").parser.HTMLParser):
+    """Text of <body> exactly as the browser's textContent sees it, plus the offset of every id."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.in_body = False
+        self.parts: list[str] = []
+        self.length = 0
+        self.ids: dict[str, int] = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower().rsplit(":", 1)[-1] == "body":
+            self.in_body = True
+        if self.in_body:
+            for k, v in attrs:
+                if k == "id" and v and v not in self.ids:
+                    self.ids[v] = self.length
+
+    handle_startendtag = handle_starttag
+
+    def handle_endtag(self, tag):
+        if tag.lower().rsplit(":", 1)[-1] == "body":
+            self.in_body = False
+
+    def handle_data(self, data):
+        if self.in_body:
+            self.parts.append(data)
+            self.length += len(data)
+
+
+def chapter_text(session: ZipSession, path: str) -> tuple[str, dict[str, int]]:
+    cache = session.__dict__.setdefault("_text_cache", {})
+    if path not in cache:
+        res = session.serve(path)
+        p = _BodyText()
+        if res:
+            raw = res[0].decode("utf-8", errors="replace")
+            raw = re.sub(r"<!\[CDATA\[(.*?)\]\]>", lambda m: m.group(1), raw, flags=re.S)
+            p.feed(raw)
+            p.close()
+        cache[path] = ("".join(p.parts), p.ids)
+    return cache[path]

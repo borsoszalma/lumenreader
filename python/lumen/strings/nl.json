@@ -46,5 +46,17 @@
   "ShowInFolder": "Weergeven in map",
   "FileMissing": "Bestand niet gevonden: {0}",
   "RemoveFromList": "Uit lijst verwijderen",
-  "WordNotesInfo": "Markeringen en notities worden ook als Word-opmerkingen in een kopie opgeslagen:"
+  "WordNotesInfo": "Markeringen en notities worden ook als Word-opmerkingen in een kopie opgeslagen:",
+  "Search": "Zoeken",
+  "SearchPlaceholder": "Zoeken in document…",
+  "SearchCount": "{0} van {1}",
+  "NoMatches": "Geen resultaten",
+  "PdfNotesInfo": "Markeringen en notities worden ook als PDF-opmerkingen in een kopie opgeslagen:",
+  "SavedCopy": "Notities opgeslagen in: {0}",
+  "CopyChanged": "De kopie met notities is buiten de app gewijzigd en niet overschreven. Nieuwe kopie: {0}",
+  "Backup": "Back-up",
+  "BackupExport": "Notities en leesposities opslaan",
+  "BackupImport": "Herstellen uit back-up",
+  "BackupImported": "Hersteld: gegevens van {0} documenten",
+  "BackupInvalid": "Dit is geen Lumen Reader-back-upbestand."
 }

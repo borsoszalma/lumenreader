@@ -46,5 +46,17 @@
   "ShowInFolder": "Afficher dans le dossier",
   "FileMissing": "Fichier introuvable : {0}",
   "RemoveFromList": "Retirer de la liste",
-  "WordNotesInfo": "Les surlignages et notes sont aussi enregistrés comme commentaires Word dans une copie :"
+  "WordNotesInfo": "Les surlignages et notes sont aussi enregistrés comme commentaires Word dans une copie :",
+  "Search": "Rechercher",
+  "SearchPlaceholder": "Rechercher dans le document…",
+  "SearchCount": "{0} sur {1}",
+  "NoMatches": "Aucun résultat",
+  "PdfNotesInfo": "Les surlignages et notes sont aussi enregistrés comme commentaires PDF dans une copie :",
+  "SavedCopy": "Notes enregistrées dans : {0}",
+  "CopyChanged": "La copie annotée a été modifiée hors de l’application ; elle n’a pas été écrasée. Nouvelle copie : {0}",
+  "Backup": "Sauvegarde",
+  "BackupExport": "Sauvegarder notes et positions de lecture",
+  "BackupImport": "Restaurer une sauvegarde",
+  "BackupImported": "Restauré : données de {0} documents",
+  "BackupInvalid": "Ce n’est pas un fichier de sauvegarde Lumen Reader."
 }

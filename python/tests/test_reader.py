@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
 from lumen import formats, i18n, settings as settings_mod  # noqa: E402
-from lumen.formats import doc, docx, docx_export, markdown, pdf, rtf  # noqa: E402
+from lumen.formats import doc, docx, docx_export, epub, markdown, pdf, pdf_export, rtf  # noqa: E402
 from lumen.library import Library  # noqa: E402
 from lumen.server import ReaderApp, start_server  # noqa: E402
 
@@ -212,7 +212,67 @@ class WordExportTests(unittest.TestCase):
         self.assertEqual(before, open(fx("sample.docx"), "rb").read())
 
 
+class PdfExportTests(unittest.TestCase):
+    def test_highlight_and_note(self):
+        anns = [{"id": "x1", "section": "1", "color": "green", "note": "Megjegyzés ő ű",
+                 "pdfRects": [[72, 600, 300, 615], [72, 585, 200, 600]]},
+                {"id": "x2", "section": "1", "color": "yellow", "note": "", "pdfRects": [[72, 500, 150, 515]]}]
+        for name in ("sample.pdf", "sample_objstm.pdf"):  # classic xref table / xref stream
+            with tempfile.TemporaryDirectory() as tmp:
+                out = os.path.join(tmp, "out.pdf")
+                self.assertEqual(pdf_export.export(fx(name), out, anns, author="Teszt Elek"), 2)
+                with open(out, "rb") as f:
+                    data = f.read()
+                with open(fx(name), "rb") as f:
+                    original = f.read()
+                self.assertTrue(data.startswith(original))  # incremental update keeps every original byte
+                r = pdf.PdfReader(data)
+                page = r.resolve(pdf.Ref(r.pages()[0], 0))
+                annots = [r.resolve(a) for a in r.resolve(page["/Annots"])]
+                kinds = sorted(a["/Subtype"] for a in annots)
+                self.assertEqual(kinds, ["/Highlight", "/Highlight", "/Popup"], name)
+                note = next(a for a in annots if a.get("/Contents"))
+                self.assertEqual(pdf.pdf_text(note["/Contents"]), "Megjegyzés ő ű")
+                # outline still readable after the update
+                self.assertEqual(len(pdf.read_structure(out)[0]), 2)
+
+    def test_encrypted_is_refused(self):
+        self.assertTrue(pdf_export.can_annotate(fx("sample.pdf")))
+
+
+class EpubSearchTests(unittest.TestCase):
+    def test_chapter_text_and_ids(self):
+        s = formats.load(fx("sample.epub"), t)
+        text, ids = epub.chapter_text(s, s.spine[-1])
+        self.assertIn("Táblázat", text)
+        self.assertIn("táblázat", ids)
+        self.assertTrue(text[ids["táblázat"]:].lstrip().startswith("Táblázat"))
+
+
 class LibraryTests(unittest.TestCase):
+    def test_backup_roundtrip(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            lib = Library(a)
+            key = lib.key_for(fx("sample.md"))
+            lib.touch(key, fx("sample.md"), "sample", "flow")
+            lib.set_annotations(key, [{"id": "n1", "quote": "x", "updated": 1}])
+            backup = lib.export_data()
+            other = Library(b)
+            other.touch(key, fx("sample.md"), "sample", "flow")
+            other.set_annotations(key, [{"id": "n2", "quote": "y", "updated": 1}])
+            self.assertEqual(other.import_data(backup), 1)
+            self.assertEqual(sorted(x["id"] for x in other.get(key)["annotations"]), ["n1", "n2"])
+            with self.assertRaises(ValueError):
+                other.import_data({"something": "else"})
+
+    def test_free_name(self):
+        from lumen.server import free_name
+        with tempfile.TemporaryDirectory() as tmp:
+            p = os.path.join(tmp, "a (notes).docx")
+            self.assertEqual(free_name(p), p)
+            open(p, "w").close()
+            self.assertEqual(os.path.basename(free_name(p)), "a (notes 2).docx")
+
     def test_recent_position_notes(self):
         with tempfile.TemporaryDirectory() as tmp:
             lib = Library(tmp)

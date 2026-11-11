@@ -26,6 +26,7 @@ class TocItem:
     href: Optional[str] = None      # session-relative path (+ #fragment) – EPUB chapters
     anchor: Optional[str] = None    # element id inside the page
     page: Optional[int] = None      # PDF page number (1-based)
+    top: Optional[float] = None     # PDF: y coordinate of the destination on the page (user space)
     children: list["TocItem"] = field(default_factory=list)
 
     def to_json(self) -> dict:
@@ -36,6 +37,8 @@ class TocItem:
             d["anchor"] = self.anchor
         if self.page is not None:
             d["page"] = self.page
+        if self.top is not None:
+            d["top"] = self.top
         if self.children:
             d["children"] = [c.to_json() for c in self.children]
         return d

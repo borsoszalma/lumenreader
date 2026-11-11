@@ -46,5 +46,17 @@
   "ShowInFolder": "Mostrar na pasta",
   "FileMissing": "Ficheiro não encontrado: {0}",
   "RemoveFromList": "Remover da lista",
-  "WordNotesInfo": "Os realces e notas também são guardados como comentários do Word numa cópia:"
+  "WordNotesInfo": "Os realces e notas também são guardados como comentários do Word numa cópia:",
+  "Search": "Pesquisar",
+  "SearchPlaceholder": "Pesquisar no documento…",
+  "SearchCount": "{0} de {1}",
+  "NoMatches": "Sem resultados",
+  "PdfNotesInfo": "Os realces e notas também são guardados como comentários PDF numa cópia:",
+  "SavedCopy": "Notas guardadas em: {0}",
+  "CopyChanged": "A cópia anotada foi alterada fora da aplicação e não foi substituída. Nova cópia: {0}",
+  "Backup": "Cópia de segurança",
+  "BackupExport": "Guardar notas e posições de leitura",
+  "BackupImport": "Restaurar cópia de segurança",
+  "BackupImported": "Restaurado: dados de {0} documentos",
+  "BackupInvalid": "Este não é um ficheiro de cópia de segurança do Lumen Reader."
 }

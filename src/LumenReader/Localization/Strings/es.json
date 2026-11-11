@@ -46,5 +46,17 @@
   "ShowInFolder": "Mostrar en la carpeta",
   "FileMissing": "No se encuentra el archivo: {0}",
   "RemoveFromList": "Quitar de la lista",
-  "WordNotesInfo": "Los resaltados y notas también se guardan como comentarios de Word en una copia:"
+  "WordNotesInfo": "Los resaltados y notas también se guardan como comentarios de Word en una copia:",
+  "Search": "Buscar",
+  "SearchPlaceholder": "Buscar en el documento…",
+  "SearchCount": "{0} de {1}",
+  "NoMatches": "Sin resultados",
+  "PdfNotesInfo": "Los resaltados y notas también se guardan como comentarios PDF en una copia:",
+  "SavedCopy": "Notas guardadas en: {0}",
+  "CopyChanged": "La copia anotada se modificó fuera de la aplicación y no se sobrescribió. Nueva copia: {0}",
+  "Backup": "Copia de seguridad",
+  "BackupExport": "Guardar notas y posiciones de lectura",
+  "BackupImport": "Restaurar copia de seguridad",
+  "BackupImported": "Restaurado: datos de {0} documentos",
+  "BackupInvalid": "No es un archivo de copia de seguridad de Lumen Reader."
 }

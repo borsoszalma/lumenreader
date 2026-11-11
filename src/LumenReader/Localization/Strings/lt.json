@@ -46,5 +46,17 @@
   "ShowInFolder": "Rodyti aplanke",
   "FileMissing": "Failas nerastas: {0}",
   "RemoveFromList": "Pašalinti iš sąrašo",
-  "WordNotesInfo": "Paryškinimai ir pastabos taip pat išsaugomi kaip Word komentarai kopijoje:"
+  "WordNotesInfo": "Paryškinimai ir pastabos taip pat išsaugomi kaip Word komentarai kopijoje:",
+  "Search": "Paieška",
+  "SearchPlaceholder": "Ieškoti dokumente…",
+  "SearchCount": "{0} iš {1}",
+  "NoMatches": "Nerasta",
+  "PdfNotesInfo": "Paryškinimai ir pastabos taip pat išsaugomi kaip PDF komentarai kopijoje:",
+  "SavedCopy": "Pastabos išsaugotos: {0}",
+  "CopyChanged": "Kopija su pastabomis buvo pakeista už programos ribų, todėl neperrašyta. Nauja kopija: {0}",
+  "Backup": "Atsarginė kopija",
+  "BackupExport": "Išsaugoti pastabas ir skaitymo vietas",
+  "BackupImport": "Atkurti iš atsarginės kopijos",
+  "BackupImported": "Atkurta: {0} dokumentų duomenys",
+  "BackupInvalid": "Tai ne Lumen Reader atsarginės kopijos failas."
 }

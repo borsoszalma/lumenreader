@@ -46,5 +46,17 @@
   "ShowInFolder": "Megjelenítés a mappában",
   "FileMissing": "A fájl már nem található: {0}",
   "RemoveFromList": "Eltávolítás a listából",
-  "WordNotesInfo": "A kiemelések és megjegyzések Word-megjegyzésként egy másolatba is mentődnek:"
+  "WordNotesInfo": "A kiemelések és megjegyzések Word-megjegyzésként egy másolatba is mentődnek:",
+  "Search": "Keresés",
+  "SearchPlaceholder": "Keresés a dokumentumban…",
+  "SearchCount": "{0} / {1}",
+  "NoMatches": "Nincs találat",
+  "PdfNotesInfo": "A kiemelések és megjegyzések PDF-megjegyzésként egy másolatba is mentődnek:",
+  "SavedCopy": "Jegyzetek mentve ide: {0}",
+  "CopyChanged": "A jegyzetes másolatot közben máshol módosították, ezért nem írtam felül. Új másolat: {0}",
+  "Backup": "Biztonsági mentés",
+  "BackupExport": "Jegyzetek és olvasási helyek mentése",
+  "BackupImport": "Visszatöltés mentésből",
+  "BackupImported": "Visszatöltve: {0} dokumentum adatai",
+  "BackupInvalid": "Ez nem Lumen Reader mentésfájl."
 }

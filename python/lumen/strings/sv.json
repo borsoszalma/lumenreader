@@ -46,5 +46,17 @@
   "ShowInFolder": "Visa i mapp",
   "FileMissing": "Filen hittades inte: {0}",
   "RemoveFromList": "Ta bort från listan",
-  "WordNotesInfo": "Markeringar och anteckningar sparas också som Word-kommentarer i en kopia:"
+  "WordNotesInfo": "Markeringar och anteckningar sparas också som Word-kommentarer i en kopia:",
+  "Search": "Sök",
+  "SearchPlaceholder": "Sök i dokumentet…",
+  "SearchCount": "{0} av {1}",
+  "NoMatches": "Inga träffar",
+  "PdfNotesInfo": "Markeringar och anteckningar sparas också som PDF-kommentarer i en kopia:",
+  "SavedCopy": "Anteckningar sparade i: {0}",
+  "CopyChanged": "Kopian med anteckningar ändrades utanför appen och skrevs inte över. Ny kopia: {0}",
+  "Backup": "Säkerhetskopia",
+  "BackupExport": "Spara anteckningar och läspositioner",
+  "BackupImport": "Återställ från säkerhetskopia",
+  "BackupImported": "Återställt: data för {0} dokument",
+  "BackupInvalid": "Det här är ingen säkerhetskopia från Lumen Reader."
 }

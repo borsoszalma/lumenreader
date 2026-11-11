@@ -49,6 +49,9 @@ class PdfReader:
         self.trailer: dict = {}
         self.cache: dict[int, Any] = {}
         self._objstm_cache: dict[int, dict[int, Any]] = {}
+        self._defined: set[int] = set()        # object numbers already set by a newer xref section
+        self.startxref: Optional[int] = None    # offset of the newest cross-reference section
+        self.xref_is_stream = False
         try:
             self._read_xref_chain()
         except Exception:
@@ -244,6 +247,8 @@ class PdfReader:
         if idx < 0:
             raise ValueError("no startxref")
         offset = int(re.compile(rb"startxref\s+(\d+)").search(tail, idx).group(1))
+        self.startxref = offset
+        self.xref_is_stream = not self.data.startswith(b"xref", self._skip_ws(offset))
         seen = set()
         while offset is not None and offset not in seen and 0 <= offset < len(self.data):
             seen.add(offset)
@@ -278,8 +283,12 @@ class PdfReader:
                     if not e:
                         break
                     pos = e.end()
+                    num = start + k
+                    if num in self._defined:
+                        continue
+                    self._defined.add(num)
                     if e.group(3) == b"n":
-                        self.offsets.setdefault(start + k, int(e.group(1)))
+                        self.offsets[num] = int(e.group(1))
             t = d.find(b"trailer", pos)
             trailer, _ = self.parse(t + 7)
             return trailer if isinstance(trailer, dict) else {}
@@ -304,10 +313,13 @@ class PdfReader:
                 pos += rec
                 typ = fields[0] if widths[0] else 1
                 num = start + k
+                if num in self._defined:
+                    continue
+                self._defined.add(num)
                 if typ == 1:
-                    self.offsets.setdefault(num, fields[1])
+                    self.offsets[num] = fields[1]
                 elif typ == 2:
-                    self.in_stream.setdefault(num, (fields[1], fields[2] or 0))
+                    self.in_stream[num] = (fields[1], fields[2] or 0)
         return stm.dict
 
     def _brute_force(self) -> None:
@@ -408,15 +420,16 @@ class PdfReader:
         named = None
         seen: set[int] = set()
 
-        def dest_page(dest, depth=0) -> Optional[int]:
+        def dest_page(dest, depth=0):
+            """(page number, top y or None) of a destination."""
             nonlocal named
             dest = self.resolve(dest)
             if depth > 8 or dest is None:
-                return None
+                return None, None
             if isinstance(dest, dict):
                 if "/D" in dest:
                     return dest_page(dest["/D"], depth + 1)
-                return None
+                return None, None
             if isinstance(dest, (bytes, Name, str)):
                 if named is None:
                     named = self.named_dests()
@@ -424,11 +437,20 @@ class PdfReader:
                 return dest_page(named.get(key), depth + 1)
             if isinstance(dest, list) and dest:
                 target = dest[0]
+                top = None
+                kind = dest[1] if len(dest) > 1 else None
+                if kind == "/XYZ" and len(dest) > 3:
+                    top = self.resolve(dest[3])
+                elif kind in ("/FitH", "/FitBH") and len(dest) > 2:
+                    top = self.resolve(dest[2])
+                elif kind in ("/FitR",) and len(dest) > 5:
+                    top = self.resolve(dest[5])
+                top = float(top) if isinstance(top, (int, float)) else None
                 if isinstance(target, Ref):
-                    return page_index.get(target.num)
+                    return page_index.get(target.num), top
                 if isinstance(target, int):
-                    return target + 1
-            return None
+                    return target + 1, top
+            return None, None
 
         def items(first_ref, depth) -> list[TocItem]:
             result = []
@@ -445,7 +467,8 @@ class PdfReader:
                     action = self.resolve(node.get("/A"))
                     if isinstance(action, dict) and action.get("/S") == "/GoTo":
                         dest = action.get("/D")
-                item = TocItem(title=" ".join(title.split()) or "…", page=dest_page(dest))
+                page, top = dest_page(dest)
+                item = TocItem(title=" ".join(title.split()) or "…", page=page, top=top)
                 item.children = items(node.get("/First"), depth + 1)
                 result.append(item)
                 ref = node.get("/Next")

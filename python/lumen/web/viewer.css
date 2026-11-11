@@ -64,3 +64,7 @@ body.lumen-kind-epub img, body.lumen-kind-epub svg { max-width: 100%; height: au
 :root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="green"] { background-color: rgba(64, 200, 90, .30) !important; }
 :root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="blue"] { background-color: rgba(60, 150, 255, .32) !important; }
 :root[data-lumen-theme="dark"] body mark.lumen-hl.lumen-hl[data-c="pink"] { background-color: rgba(255, 90, 170, .32) !important; }
+
+/* ---------- search matches ---------- */
+:root[data-lumen-theme] body mark.lumen-find.lumen-find.lumen-find { background-color: rgba(255, 201, 51, .75) !important; color: #000 !important; border-radius: 2px; }
+:root[data-lumen-theme] body mark.lumen-find.lumen-find.lumen-find.cur { background-color: #ff8c1a !important; color: #000 !important; outline: 2px solid #ff6a00; }

@@ -15,6 +15,7 @@
     <button id="btnPrev" class="tb" disabled><span class="ic">&#xE76B;</span></button>
     <button id="btnNext" class="tb" disabled><span class="ic">&#xE76C;</span></button>
     <div id="docTitle" class="doc-title"></div>
+    <button id="btnFind" class="tb"><span class="ic">&#xE721;</span></button>
     <div class="themes" role="radiogroup">
       <button class="tb theme" data-theme="light"><span class="ic">&#xE706;</span></button>
       <button class="tb theme" data-theme="dark"><span class="ic">&#xE708;</span></button>
@@ -45,6 +46,15 @@
     <div id="splitter" class="splitter"></div>
     <section class="content">
       <iframe id="view" title="document" hidden></iframe>
+      <div id="rail" class="rail" hidden></div>
+      <div id="find" class="find" hidden>
+        <span class="ic">&#xE721;</span>
+        <input id="findInput" type="search" autocomplete="off" spellcheck="false">
+        <span id="findCount" class="find-count"></span>
+        <button id="findPrev" class="tb"><span class="ic">&#xE70E;</span></button>
+        <button id="findNext" class="tb"><span class="ic">&#xE70D;</span></button>
+        <button id="findClose" class="tb"><span class="ic">&#xE711;</span></button>
+      </div>
       <div id="welcome" class="welcome"></div>
       <div id="busy" class="busy" hidden><div class="spinner"></div><span id="busyText"></span></div>
       <footer id="status" class="status" hidden>
@@ -83,6 +93,7 @@
   <div id="drop" class="drop" hidden><div id="dropText"></div></div>
   <div id="toast" class="toast" hidden></div>
   <input type="file" id="fileInput" hidden>
+  <input type="file" id="restoreInput" accept=".json,application/json" hidden>
   <script src="app.js"></script>
 </body>
 </html>

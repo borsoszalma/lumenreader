@@ -18,7 +18,7 @@ import subprocess
 import sys
 
 from . import formats, i18n, settings as settings_mod
-from .formats import docx_export
+from .formats import docx_export, pdf_export
 from .formats.common import DocumentError, Session
 from .library import Library
 
@@ -61,8 +61,20 @@ class ReaderApp:
         info = self.session.info()
         doc = self.library.get(self.session_key) or {}
         info.update(key=self.session_key, position=doc.get("position"), progress=doc.get("progress", 0),
-                    annotations=doc.get("annotations") or [], wordCopy=doc.get("wordCopy"))
+                    annotations=doc.get("annotations") or [], copy=self.copy_kind(self.session),
+                    copyPath=doc.get("copy") or doc.get("wordCopy"))
         return info
+
+    @staticmethod
+    def copy_kind(session: Session) -> Optional[str]:
+        """'docx' / 'pdf' when notes are also written into a copy of the document."""
+        if session.docx_source:
+            return "docx"
+        if session.kind == "pdf":
+            if not hasattr(session, "_pdf_ok"):
+                session._pdf_ok = pdf_export.can_annotate(session.path)
+            return "pdf" if session._pdf_ok else None
+        return None
 
     def update_settings(self, changes: dict) -> dict:
         allowed = {"theme", "language", "tocVisible", "tocWidth", "reopenLast"}
@@ -123,33 +135,82 @@ class ReaderApp:
         self.library.set_position(key, position, progress)
 
     def save_annotations(self, key: str, annotations: list) -> dict:
+        """Stores the notes; Word and PDF documents also get an annotated copy next to the original.
+        A copy that was changed outside the app (e.g. edited in Word) is never overwritten."""
         self.library.set_annotations(key, annotations)
         session = self.session
-        if not session or key != self.session_key or not session.docx_source:
+        kind = self.copy_kind(session) if session and key == self.session_key else None
+        if not kind:
             return {"ok": True}
-        dst = self.word_copy_path(session)
-        try:
-            os.makedirs(os.path.dirname(dst), exist_ok=True)
-            docx_export.export(session.docx_source, dst, annotations, author=user_display_name())
-        except PermissionError:
-            if os.path.exists(dst):  # the copy is open in Word
-                return {"ok": True, "wordError": self.t("WordSaveFailed").format(os.path.basename(dst))}
-            dst = os.path.join(documents_dir(), "Lumen Reader", os.path.basename(dst))
-            try:
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                docx_export.export(session.docx_source, dst, annotations, author=user_display_name())
-            except Exception as e:
-                log.exception("word export")
-                return {"ok": True, "wordError": f"{self.t('WordSaveFailed').format(os.path.basename(dst))}\n{e}"}
-        except Exception as e:
-            log.exception("word export")
-            return {"ok": True, "wordError": f"{self.t('WordSaveFailed').format(os.path.basename(dst))}\n{e}"}
-        self.library.set_word_copy(key, dst)
-        return {"ok": True, "wordCopy": dst}
+        doc = self.library.get(key) or {}
+        dst = doc.get("copy") or doc.get("wordCopy") or self.copy_path(session, kind)
+        if not os.path.exists(dst) and not annotations:
+            return {"ok": True}
+        changed = False
+        stamp = doc.get("copyStamp")
+        if os.path.exists(dst) and stamp and file_stamp(dst) != stamp:
+            dst = free_name(self.copy_path(session, kind))
+            changed = True
 
-    def word_copy_path(self, session: Session) -> str:
+        def write(target):
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            if kind == "docx":
+                docx_export.export(session.docx_source, target, annotations, author=user_display_name())
+            else:
+                pdf_export.export(session.path, target, annotations, author=user_display_name())
+
+        name = os.path.basename(dst)
+        try:
+            write(dst)
+        except PermissionError:
+            if os.path.exists(dst):  # the copy is open in Word / a PDF viewer
+                return {"ok": True, "copyError": self.t("WordSaveFailed").format(name)}
+            dst = free_name(os.path.join(documents_dir(), "Lumen Reader", name))
+            try:
+                write(dst)
+            except Exception as e:
+                log.exception("copy export")
+                return {"ok": True, "copyError": f"{self.t('WordSaveFailed').format(name)}\n{e}"}
+        except Exception as e:
+            log.exception("copy export")
+            return {"ok": True, "copyError": f"{self.t('WordSaveFailed').format(name)}\n{e}"}
+        self.library.set_copy(key, dst, file_stamp(dst))
+        return {"ok": True, "copy": dst, "copyChanged": changed}
+
+    def search(self, q: str) -> dict:
+        """EPUB: match positions in every chapter (the browser only has the current one)."""
+        session = self.session
+        q = (q or "").strip().lower()
+        if not session or session.kind != "epub" or len(q) < 2:
+            return {"chapters": []}
+        from .formats import epub
+
+        wanted: dict[str, set] = {}
+
+        def collect(items):
+            for it in items or []:
+                if it.href and "#" in it.href:
+                    path, frag = it.href.split("#", 1)
+                    wanted.setdefault(path, set()).add(frag)
+                collect(it.children)
+
+        collect(session.toc)
+        chapters = []
+        for path in session.spine:
+            text, ids = epub.chapter_text(session, path)
+            low = text.lower()
+            positions = []
+            i = low.find(q)
+            while i >= 0 and len(positions) < 5000:
+                positions.append(i)
+                i = low.find(q, i + len(q))
+            frags = {f: ids[f] for f in wanted.get(path, ()) if f in ids}
+            chapters.append({"path": path, "positions": positions, "ids": frags})
+        return {"chapters": chapters}
+
+    def copy_path(self, session: Session, kind: str) -> str:
         title = os.path.splitext(os.path.basename(session.path))[0]
-        name = f"{title} ({self.t('WithNotes')}).docx"
+        name = f"{title} ({self.t('WithNotes')}).{kind}"
         if self.library.is_library_copy(session.path):
             return os.path.join(documents_dir(), "Lumen Reader", name)
         return os.path.join(os.path.dirname(os.path.abspath(session.path)), name)
@@ -192,6 +253,27 @@ class ReaderApp:
         if self.session:
             self.session.close()
         shutil.rmtree(self.upload_dir, ignore_errors=True)
+
+
+def file_stamp(path: str) -> Optional[str]:
+    try:
+        st = os.stat(path)
+        return f"{st.st_size}:{st.st_mtime_ns}"
+    except OSError:
+        return None
+
+
+def free_name(path: str) -> str:
+    """'X (with notes).docx' → 'X (with notes 2).docx', 3, … whichever does not exist yet."""
+    if not os.path.exists(path):
+        return path
+    base, ext = os.path.splitext(path)
+    stem = base[:-1] if base.endswith(")") else base
+    for n in range(2, 1000):
+        candidate = f"{stem} {n}){ext}" if base.endswith(")") else f"{base} ({n}){ext}"
+        if not os.path.exists(candidate):
+            return candidate
+    return path
 
 
 def documents_dir() -> str:
@@ -278,6 +360,19 @@ def make_handler(app: ReaderApp):
                 rel = "index.html"
             if rel == "api/state":
                 return self._json(app.state())
+            if rel == "api/backup":
+                body = json.dumps(app.library.export_data(), ensure_ascii=False, indent=1).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Content-Disposition",
+                                 f'attachment; filename="lumen-reader-{time.strftime("%Y-%m-%d")}.json"')
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if rel == "api/search":
+                q = (parse_qs(urlparse(self.path).query).get("q") or [""])[0]
+                return self._json(app.search(q))
             if rel.startswith("doc/"):
                 parts = rel.split("/", 2)
                 session = app.session
@@ -337,6 +432,12 @@ def make_handler(app: ReaderApp):
             if rel == "api/annotations":
                 req = json.loads(body or b"{}")
                 return self._json(app.save_annotations(req.get("key", ""), req.get("annotations") or []))
+            if rel == "api/restore":
+                try:
+                    n = app.library.import_data(json.loads(body or b"{}"))
+                    return self._json({"imported": n, "recent": app.library.recent()})
+                except (ValueError, AttributeError):
+                    return self._json({"error": app.t("BackupInvalid")})
             if rel == "api/forget":
                 app.library.remove_recent(json.loads(body or b"{}").get("key", ""))
                 return self._json({"recent": app.library.recent()})

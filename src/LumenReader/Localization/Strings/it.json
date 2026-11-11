@@ -46,5 +46,17 @@
   "ShowInFolder": "Mostra nella cartella",
   "FileMissing": "File non trovato: {0}",
   "RemoveFromList": "Rimuovi dall’elenco",
-  "WordNotesInfo": "Evidenziazioni e note vengono salvate anche come commenti di Word in una copia:"
+  "WordNotesInfo": "Evidenziazioni e note vengono salvate anche come commenti di Word in una copia:",
+  "Search": "Cerca",
+  "SearchPlaceholder": "Cerca nel documento…",
+  "SearchCount": "{0} di {1}",
+  "NoMatches": "Nessun risultato",
+  "PdfNotesInfo": "Evidenziazioni e note vengono salvate anche come commenti PDF in una copia:",
+  "SavedCopy": "Note salvate in: {0}",
+  "CopyChanged": "La copia annotata è stata modificata fuori dall’app e non è stata sovrascritta. Nuova copia: {0}",
+  "Backup": "Backup",
+  "BackupExport": "Salva note e posizioni di lettura",
+  "BackupImport": "Ripristina da backup",
+  "BackupImported": "Ripristinato: dati di {0} documenti",
+  "BackupInvalid": "Questo non è un file di backup di Lumen Reader."
 }

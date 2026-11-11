@@ -46,5 +46,17 @@
   "ShowInFolder": "Show in folder",
   "FileMissing": "The file can no longer be found: {0}",
   "RemoveFromList": "Remove from list",
-  "WordNotesInfo": "Highlights and notes are also saved as Word comments in a copy:"
+  "WordNotesInfo": "Highlights and notes are also saved as Word comments in a copy:",
+  "Search": "Search",
+  "SearchPlaceholder": "Search in the document…",
+  "SearchCount": "{0} of {1}",
+  "NoMatches": "No matches",
+  "PdfNotesInfo": "Highlights and notes are also saved as PDF comments in a copy:",
+  "SavedCopy": "Notes saved to: {0}",
+  "CopyChanged": "The annotated copy was changed outside the app, so it was not overwritten. New copy: {0}",
+  "Backup": "Backup",
+  "BackupExport": "Save notes and reading positions",
+  "BackupImport": "Restore from backup",
+  "BackupImported": "Restored: data of {0} documents",
+  "BackupInvalid": "This is not a Lumen Reader backup file."
 }

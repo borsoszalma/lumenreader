@@ -46,5 +46,17 @@
   "ShowInFolder": "Prikaži u fascikli",
   "FileMissing": "Datoteka više ne postoji: {0}",
   "RemoveFromList": "Ukloni sa liste",
-  "WordNotesInfo": "Isticanja i beleške čuvaju se i kao Word komentari u kopiji:"
+  "WordNotesInfo": "Isticanja i beleške čuvaju se i kao Word komentari u kopiji:",
+  "Search": "Pretraga",
+  "SearchPlaceholder": "Pretraži dokument…",
+  "SearchCount": "{0} od {1}",
+  "NoMatches": "Nema rezultata",
+  "PdfNotesInfo": "Isticanja i beleške čuvaju se i kao PDF komentari u kopiji:",
+  "SavedCopy": "Beleške sačuvane u: {0}",
+  "CopyChanged": "Kopija sa beleškama je izmenjena van aplikacije, pa nije prepisana. Nova kopija: {0}",
+  "Backup": "Rezervna kopija",
+  "BackupExport": "Sačuvaj beleške i mesta čitanja",
+  "BackupImport": "Vrati iz rezervne kopije",
+  "BackupImported": "Vraćeno: podaci {0} dokumenata",
+  "BackupInvalid": "Ovo nije datoteka rezervne kopije Lumen Readera."
 }

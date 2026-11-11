@@ -46,5 +46,17 @@
   "ShowInFolder": "Zobraziť v priečinku",
   "FileMissing": "Súbor sa nenašiel: {0}",
   "RemoveFromList": "Odstrániť zo zoznamu",
-  "WordNotesInfo": "Zvýraznenia a poznámky sa ukladajú aj ako komentáre Wordu do kópie:"
+  "WordNotesInfo": "Zvýraznenia a poznámky sa ukladajú aj ako komentáre Wordu do kópie:",
+  "Search": "Hľadať",
+  "SearchPlaceholder": "Hľadať v dokumente…",
+  "SearchCount": "{0} z {1}",
+  "NoMatches": "Žiadne výsledky",
+  "PdfNotesInfo": "Zvýraznenia a poznámky sa ukladajú aj ako komentáre PDF do kópie:",
+  "SavedCopy": "Poznámky uložené do: {0}",
+  "CopyChanged": "Kópia s poznámkami bola zmenená mimo aplikácie, preto nebola prepísaná. Nová kópia: {0}",
+  "Backup": "Záloha",
+  "BackupExport": "Uložiť poznámky a miesta čítania",
+  "BackupImport": "Obnoviť zo zálohy",
+  "BackupImported": "Obnovené: údaje {0} dokumentov",
+  "BackupInvalid": "Toto nie je záložný súbor Lumen Reader."
 }

@@ -46,5 +46,17 @@
   "ShowInFolder": "Rādīt mapē",
   "FileMissing": "Fails vairs nav atrodams: {0}",
   "RemoveFromList": "Noņemt no saraksta",
-  "WordNotesInfo": "Iezīmes un piezīmes tiek saglabātas arī kā Word komentāri kopijā:"
+  "WordNotesInfo": "Iezīmes un piezīmes tiek saglabātas arī kā Word komentāri kopijā:",
+  "Search": "Meklēt",
+  "SearchPlaceholder": "Meklēt dokumentā…",
+  "SearchCount": "{0} no {1}",
+  "NoMatches": "Nav rezultātu",
+  "PdfNotesInfo": "Iezīmes un piezīmes tiek saglabātas arī kā PDF komentāri kopijā:",
+  "SavedCopy": "Piezīmes saglabātas: {0}",
+  "CopyChanged": "Kopija ar piezīmēm tika mainīta ārpus lietotnes, tāpēc netika pārrakstīta. Jauna kopija: {0}",
+  "Backup": "Dublējums",
+  "BackupExport": "Saglabāt piezīmes un lasīšanas vietas",
+  "BackupImport": "Atjaunot no dublējuma",
+  "BackupImported": "Atjaunots: {0} dokumentu dati",
+  "BackupInvalid": "Šis nav Lumen Reader dublējuma fails."
 }

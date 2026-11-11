@@ -46,5 +46,17 @@
   "ShowInFolder": "Im Ordner anzeigen",
   "FileMissing": "Die Datei wurde nicht gefunden: {0}",
   "RemoveFromList": "Aus der Liste entfernen",
-  "WordNotesInfo": "Markierungen und Notizen werden auch als Word-Kommentare in einer Kopie gespeichert:"
+  "WordNotesInfo": "Markierungen und Notizen werden auch als Word-Kommentare in einer Kopie gespeichert:",
+  "Search": "Suchen",
+  "SearchPlaceholder": "Im Dokument suchen…",
+  "SearchCount": "{0} von {1}",
+  "NoMatches": "Keine Treffer",
+  "PdfNotesInfo": "Markierungen und Notizen werden auch als PDF-Kommentare in einer Kopie gespeichert:",
+  "SavedCopy": "Notizen gespeichert in: {0}",
+  "CopyChanged": "Die kommentierte Kopie wurde außerhalb der App geändert und daher nicht überschrieben. Neue Kopie: {0}",
+  "Backup": "Sicherung",
+  "BackupExport": "Notizen und Lesepositionen sichern",
+  "BackupImport": "Aus Sicherung wiederherstellen",
+  "BackupImported": "Wiederhergestellt: Daten von {0} Dokumenten",
+  "BackupInvalid": "Dies ist keine Lumen-Reader-Sicherungsdatei."
 }

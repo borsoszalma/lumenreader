@@ -46,5 +46,17 @@
   "ShowInFolder": "Näita kaustas",
   "FileMissing": "Faili ei leitud: {0}",
   "RemoveFromList": "Eemalda loendist",
-  "WordNotesInfo": "Esiletõstmised ja märkmed salvestatakse ka Wordi kommentaaridena koopiasse:"
+  "WordNotesInfo": "Esiletõstmised ja märkmed salvestatakse ka Wordi kommentaaridena koopiasse:",
+  "Search": "Otsi",
+  "SearchPlaceholder": "Otsi dokumendist…",
+  "SearchCount": "{0}/{1}",
+  "NoMatches": "Vasteid pole",
+  "PdfNotesInfo": "Esiletõstmised ja märkmed salvestatakse ka PDF-kommentaaridena koopiasse:",
+  "SavedCopy": "Märkmed salvestati: {0}",
+  "CopyChanged": "Märkmetega koopiat muudeti väljaspool rakendust, seega seda üle ei kirjutatud. Uus koopia: {0}",
+  "Backup": "Varukoopia",
+  "BackupExport": "Salvesta märkmed ja lugemiskohad",
+  "BackupImport": "Taasta varukoopiast",
+  "BackupImported": "Taastatud: {0} dokumendi andmed",
+  "BackupInvalid": "See ei ole Lumen Readeri varukoopia fail."
 }

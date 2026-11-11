@@ -34,3 +34,7 @@ html, body { margin: 0; background: #e8e8eb; }
 .textLayer mark.lumen-hl[data-c="blue"] { background: rgba(60, 150, 255, .36) !important; }
 .textLayer mark.lumen-hl[data-c="pink"] { background: rgba(255, 90, 170, .36) !important; }
 .textLayer mark.lumen-hl.note { border-bottom: 2px solid rgba(180, 80, 0, .9); }
+
+/* search matches */
+.textLayer mark.lumen-find { color: transparent !important; background: rgba(255, 190, 0, .55) !important; border-radius: 2px; padding: 0; }
+.textLayer mark.lumen-find.cur { background: rgba(255, 106, 0, .65) !important; outline: 2px solid #ff6a00; }

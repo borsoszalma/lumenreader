@@ -122,12 +122,58 @@ class Library:
                 doc["annotations"] = annotations
                 self.save()
 
-    def set_word_copy(self, key: str, path: Optional[str]) -> None:
+    def set_copy(self, key: str, path: Optional[str], stamp: Optional[str]) -> None:
+        """Remembers the annotated copy (Word/PDF) and its size+time, to notice outside edits."""
         with self.lock:
             doc = self.data["docs"].get(key)
             if doc is not None:
-                doc["wordCopy"] = path
+                doc["copy"] = path
+                doc["copyStamp"] = stamp
+                doc.pop("wordCopy", None)
                 self.save()
+
+    # ------------------------------------------------------------ backup
+    def export_data(self) -> dict:
+        with self.lock:
+            return {"app": "Lumen Reader", "kind": "notes-backup", "version": 1, "exported": time.time(),
+                    "docs": json.loads(json.dumps(self.data["docs"])), "recent": list(self.data["recent"])}
+
+    def import_data(self, data: dict) -> int:
+        """Merges a backup: notes are united by id (newer edit wins), the newer reading position wins."""
+        if not isinstance(data, dict) or data.get("kind") != "notes-backup" or not isinstance(data.get("docs"), dict):
+            raise ValueError("not a backup")
+        count = 0
+        with self.lock:
+            docs = self.data["docs"]
+            for key, doc in data["docs"].items():
+                if not isinstance(doc, dict):
+                    continue
+                count += 1
+                mine = docs.get(key)
+                if mine is None:
+                    docs[key] = doc
+                    continue
+                notes = {a.get("id"): a for a in mine.get("annotations") or [] if isinstance(a, dict)}
+                for a in doc.get("annotations") or []:
+                    if not isinstance(a, dict):
+                        continue
+                    old = notes.get(a.get("id"))
+                    if old is None or (a.get("updated") or 0) > (old.get("updated") or 0):
+                        notes[a.get("id")] = a
+                mine["annotations"] = list(notes.values())
+                if (doc.get("opened") or 0) > (mine.get("opened") or 0):
+                    for k in ("position", "progress", "opened"):
+                        if k in doc:
+                            mine[k] = doc[k]
+                if not os.path.isfile(mine.get("path", "")) and doc.get("path"):
+                    mine["path"] = doc["path"]
+            recent = list(self.data["recent"])
+            for key in data.get("recent") or []:
+                if key in docs and key not in recent:
+                    recent.append(key)
+            self.data["recent"] = recent[:MAX_RECENT]
+            self.save()
+        return count
 
     def remove_recent(self, key: str) -> None:
         with self.lock:

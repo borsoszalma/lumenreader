@@ -46,5 +46,17 @@
   "ShowInFolder": "Prikaži u mapi",
   "FileMissing": "Datoteka više ne postoji: {0}",
   "RemoveFromList": "Ukloni s popisa",
-  "WordNotesInfo": "Isticanja i bilješke spremaju se i kao Word komentari u kopiju:"
+  "WordNotesInfo": "Isticanja i bilješke spremaju se i kao Word komentari u kopiju:",
+  "Search": "Traži",
+  "SearchPlaceholder": "Traži u dokumentu…",
+  "SearchCount": "{0} od {1}",
+  "NoMatches": "Nema rezultata",
+  "PdfNotesInfo": "Isticanja i bilješke spremaju se i kao PDF komentari u kopiju:",
+  "SavedCopy": "Bilješke spremljene u: {0}",
+  "CopyChanged": "Kopija s bilješkama promijenjena je izvan aplikacije pa nije prepisana. Nova kopija: {0}",
+  "Backup": "Sigurnosna kopija",
+  "BackupExport": "Spremi bilješke i mjesta čitanja",
+  "BackupImport": "Vrati iz sigurnosne kopije",
+  "BackupImported": "Vraćeno: podaci {0} dokumenata",
+  "BackupInvalid": "Ovo nije datoteka sigurnosne kopije Lumen Readera."
 }

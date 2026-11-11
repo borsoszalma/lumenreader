@@ -46,5 +46,17 @@
   "ShowInFolder": "Arată în folder",
   "FileMissing": "Fișierul nu mai există: {0}",
   "RemoveFromList": "Elimină din listă",
-  "WordNotesInfo": "Evidențierile și notele sunt salvate și ca comentarii Word într-o copie:"
+  "WordNotesInfo": "Evidențierile și notele sunt salvate și ca comentarii Word într-o copie:",
+  "Search": "Căutare",
+  "SearchPlaceholder": "Caută în document…",
+  "SearchCount": "{0} din {1}",
+  "NoMatches": "Niciun rezultat",
+  "PdfNotesInfo": "Evidențierile și notele sunt salvate și ca comentarii PDF într-o copie:",
+  "SavedCopy": "Note salvate în: {0}",
+  "CopyChanged": "Copia adnotată a fost modificată în afara aplicației, deci nu a fost suprascrisă. Copie nouă: {0}",
+  "Backup": "Copie de siguranță",
+  "BackupExport": "Salvează notele și pozițiile de lectură",
+  "BackupImport": "Restaurează din copie",
+  "BackupImported": "Restaurat: datele a {0} documente",
+  "BackupInvalid": "Acesta nu este un fișier de copie Lumen Reader."
 }

@@ -92,6 +92,7 @@ async function render(n) {
     text.append(end);
 
     p.el.replaceChildren(canvas, text);
+    p.viewport = viewport;
     p.rendered = true;
     window.dispatchEvent(new CustomEvent('lumen-page', { detail: n }));
   } catch (e) {
@@ -137,7 +138,11 @@ window.lumenPdf = {
       const el = pages[i].el;
       const top = el.offsetTop;
       const bottom = top + el.offsetHeight + 14;
-      if (y < bottom) return { page: i + 1, offset: Math.max(0, Math.min(1, (y - top) / el.offsetHeight)) };
+      if (y < bottom) {
+        const offset = Math.max(0, Math.min(1, (y - top) / el.offsetHeight));
+        // the same point in PDF units (y grows upwards), and how many PDF units 90 screen pixels are
+        return { page: i + 1, offset, pdfY: pages[i].height * (1 - offset), unit: pages[i].height / el.offsetHeight };
+      }
     }
     return { page: pages.length || 1, offset: 1 };
   },
@@ -149,6 +154,64 @@ window.lumenPdf = {
   textLayer(page) {
     const p = pages[page - 1];
     return p && p.rendered ? p.el.querySelector('.textLayer') : null;
+  },
+  pageBox(page) {
+    const p = pages[page - 1];
+    return p ? { top: p.el.offsetTop, height: p.el.offsetHeight } : null;
+  },
+  /** Screen rectangles of the given elements → merged rectangles in PDF user space [x1, y1, x2, y2]. */
+  pdfRects(page, elements) {
+    const p = pages[page - 1];
+    if (!p || !p.viewport) return null;
+    const base = p.el.getBoundingClientRect();
+    const rects = [];
+    for (const el of elements) {
+      for (const r of el.getClientRects()) {
+        if (r.width < 0.5 || r.height < 0.5) continue;
+        const [ax, ay] = p.viewport.convertToPdfPoint(r.left - base.left, r.top - base.top);
+        const [bx, by] = p.viewport.convertToPdfPoint(r.right - base.left, r.bottom - base.top);
+        rects.push([Math.min(ax, bx), Math.min(ay, by), Math.max(ax, bx), Math.max(ay, by)]);
+      }
+    }
+    // merge pieces of the same line
+    rects.sort((a, b) => b[1] - a[1] || a[0] - b[0]);
+    const out = [];
+    for (const r of rects) {
+      const last = out[out.length - 1];
+      if (last && Math.abs(last[1] - r[1]) < 2 && Math.abs(last[3] - r[3]) < 2 && r[0] <= last[2] + 4) {
+        last[2] = Math.max(last[2], r[2]);
+      } else {
+        out.push([...r]);
+      }
+    }
+    return out.map((r) => r.map((v) => Math.round(v * 100) / 100));
+  },
+  /** Plain text of every page (same text the text layer shows), for searching. */
+  async pageTexts() {
+    await this.pageIndex();
+    return this._texts;
+  },
+  /** Per page: texts plus [offset, y] of every text piece, to know how high on the page a match is. */
+  async pageIndex() {
+    if (!this._texts) {
+      const texts = [];
+      const ys = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const tc = await (await pdf.getPage(i)).getTextContent();
+        let off = 0;
+        const map = [];
+        for (const it of tc.items) {
+          const str = it.str || '';
+          if (str) map.push([off, it.transform ? it.transform[5] : 0]);
+          off += str.length;
+        }
+        texts.push(tc.items.map((it) => it.str || '').join(''));
+        ys.push(map);
+      }
+      this._texts = texts;
+      this._ys = ys;
+    }
+    return { texts: this._texts, ys: this._ys };
   },
 };
 
